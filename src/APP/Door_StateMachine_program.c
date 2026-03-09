@@ -10,6 +10,7 @@
 /* ============================================ */
 /*          PRIVATE VARIABLES                   */
 /* ============================================ */
+// Global var for the state of the Door (OPEN/CLOSED)
 static door_state_t Global_current_door_state = DOOR_CLOSED;
 
 

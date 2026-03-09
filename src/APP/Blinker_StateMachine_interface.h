@@ -38,6 +38,6 @@ blinkers_state_t Blinker_GetState(void);
 /**
  * Get previous blinker state
  */
-blinkers_state_t Blinker_GetPrevState(void)
+blinkers_state_t Blinker_GetPrevState(void);
 
 #endif /* BLINKER_STATEMACHINE_INTERFACE_H_ */

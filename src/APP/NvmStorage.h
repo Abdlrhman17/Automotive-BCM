@@ -15,7 +15,7 @@ Data saved to NVM when :
 
 typedef struct
 {
-	uint8_t last_lock_state;
+	u8 last_lock_state;
 	fault_id_t degraded_reason;
 	ecu_operational_state_t last_op_state;
 }nvm_data_t;

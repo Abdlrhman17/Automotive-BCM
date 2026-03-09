@@ -125,7 +125,7 @@ void Wiper_StateMachine_Update(void)
 				auto_wiper_off_counter++;
 			}
 			else	// Auto off counter is reached
-			{
+			{					
 				EVENTQUEUE_u8enQueue(&GlobalEventQueue,WIPER_OFF_REQUEST);
 				auto_wiper_off_counter = 0;
 				TRACE_INFO(TRACE_WIPER,"Wipers Set to off (Auto-off)");

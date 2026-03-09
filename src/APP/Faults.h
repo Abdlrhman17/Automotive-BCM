@@ -31,7 +31,7 @@ typedef struct
 	fault_id_t faultID;
 	fault_severity_t faultSeverity;
 	fault_persistence_t faultPersistence;
-	uint8_t is_Active;
+	u8 is_Active;
 }fault_t;
 
 #endif /* FAULTS_H_ */

@@ -1,10 +1,12 @@
 #ifndef VEHICLEMANAGER_H_
 #define VEHICLEMANAGER_H_
 
+// GLobal Var to the vehicle movement state
+static vehicle_movement_state_t Global_vehicle_movement = STOPPED;
+
 typedef enum
 {
-	ECU_STATE_OFF = 0,
-	ECU_STATE_STARTUP,
+	ECU_STATE_STARTUP = 0,
 	ECU_STATE_ACTIVE,
 	ECU_STATE_INVALID
 }ecu_state_t;

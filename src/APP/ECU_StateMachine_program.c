@@ -1,9 +1,13 @@
+/* ============================================ */
+/*              INCLUDES                        */
+/* ============================================ */
 #include "StdTypes.h"
 #include "Events.h"
 #include "EventQueue_interface.h"
 #include "InputManager.h"
 #include "VehicleManager.h"
 #include "Trace.h"
+
 
 /* ============================================ */
 /*          PRIVATE DEFINES                     */
@@ -18,7 +22,7 @@ static ecu_state_t Global_current_ecu_state = ECU_STATE_STARTUP;					// STARTUP/
 static ecu_operational_state_t Global_operational_state = ECU_OP_STATE_NORMAL;		// NORMAL/DIAGNOSTIC/DEGRADED
 static u16 diagnostic_timeout_counter = 0;											// Countdown timer for diag timeout
 
-// GLobal Events Queue
+// Ref to GLobal Events Queue
 extern Events_Queue_t GlobalEventQueue;
 
 // Global vehicle movement state Var

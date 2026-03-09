@@ -60,8 +60,11 @@ static input_state_t blinker_stalk_state;
 static input_state_t wiper_stalk_state;
 static input_state_t speed_signal_state;
 
-// Reference to the global event queue (extern or passed in init)
-extern Events_Queue_t GlobalEventQueue;  // Or however you manage this
+// Reference to the global event queue (extern or passed in Init)
+extern Events_Queue_t GlobalEventQueue;
+
+// Reference to the Global Var to the vehicle movement state
+extern vehicle_movement_state_t Global_vehicle_movement;
 
 
 /* ============================================ */
@@ -402,7 +405,7 @@ static void ProcessSpeedInput(void)
 			EVENTQUEUE_u8enQueue(&GlobalEventQueue,VEHICLE_STOPPED_EVENT);
 			break;
 			
-			case 1:
+			case 1:		//MOVING
 			EVENTQUEUE_u8enQueue(&GlobalEventQueue,VEHICLE_MOVING_EVENT);
 			break;
 		}

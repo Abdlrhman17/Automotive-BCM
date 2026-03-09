@@ -1,9 +1,13 @@
 #ifndef ECU_STATEMACHINE_INTERFACE_H_
 #define ECU_STATEMACHINE_INTERFACE_H_
 
+/* ============================================ */
+/*              INCLUDES                        */
+/* ============================================ */
 #include "StdTypes.h"
 #include "VehicleManager.h"
 #include "Events.h"
+
 
 /* ============================================ */
 /*          PUBLIC FUNCTION PROTOTYPES          */
@@ -25,13 +29,13 @@ void ECU_StateMachine_ProcessEvent(ecu_event_t event);
 
 /**
  * Handle periodic tasks only
- * No event dequeuing
+ * No event dequeuing	
  */
 void ECU_StateMachine_Update(void);
 
 /**
  * Get current ECU state
- * Returns: ecu_state_t (OFF/STARTUP/ACTIVE)
+ * Returns: ecu_state_t (STARTUP/ACTIVE)
  */
 ecu_state_t ECU_GetState(void);
 

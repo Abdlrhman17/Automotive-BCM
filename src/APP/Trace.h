@@ -17,6 +17,7 @@ typedef enum
 	TRACE_LOCK,
 	TRACE_BLINKER,
 	TRACE_WIPER,
+	TRACE_MOVEMENT,
 	TRACE_DIAGNOSTIC,
 	TRACE_FAULT
 } trace_category_t;

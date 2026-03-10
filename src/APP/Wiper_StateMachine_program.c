@@ -104,13 +104,13 @@ void Wiper_StateMachine_ProcessEvent(ecu_event_t event)
 			{
 				TRACE_ERROR(TRACE_WIPER,"Wipers Are only allowed in IGNITION_ON");
 			}
-		}
-		break;
-		
-		case WIPER_OFF_REQUEST:
-		Global_current_wiper_state = WIPERS_OFF;
-		TRACE_INFO(TRACE_WIPER,"Wipers Set to OFF");
-		break;
+			break;
+			
+			case WIPER_OFF_REQUEST:
+			Global_current_wiper_state = WIPERS_OFF;
+			TRACE_INFO(TRACE_WIPER,"Wipers Set to OFF");
+			break;
+		}    
 	}
 }
 

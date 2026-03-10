@@ -20,7 +20,7 @@
 /* ============================================ */
 static ecu_state_t Global_current_ecu_state = ECU_STATE_STARTUP;					// STARTUP/ACTIVE
 static ecu_operational_state_t Global_operational_state = ECU_OP_STATE_NORMAL;		// NORMAL/DIAGNOSTIC/DEGRADED
-static u16 diagnostic_timeout_counter = 0;											// Countdown timer for diag timeout
+static u32 diagnostic_timeout_counter = 0;											// Countdown timer for diag timeout
 
 // Ref to GLobal Events Queue
 extern Events_Queue_t GlobalEventQueue;

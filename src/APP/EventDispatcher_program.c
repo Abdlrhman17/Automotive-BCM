@@ -3,6 +3,11 @@
 #include "EventQueue_interface.h"
 #include "ECU_StateMachine_interface.h"
 #include "Trace.h"
+#include "Ignition_StateMachine_interface.h"
+#include "Door_StateMachine_interface.h"
+#include "Lock_StateMachine_interface.h"
+#include "Wiper_StateMachine_interface.h"
+#include "Blinker_StateMachine_interface.h"
 
 // GLobal Events Queue
 extern Events_Queue_t GlobalEventQueue;

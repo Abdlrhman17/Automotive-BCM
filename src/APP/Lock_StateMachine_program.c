@@ -7,6 +7,7 @@
 #include "Trace.h"
 #include "ECU_StateMachine_interface.h"
 #include "DiagnosticPolicy.h"
+#include "EventQueue_interface.h"
 
 
 /* ============================================ */

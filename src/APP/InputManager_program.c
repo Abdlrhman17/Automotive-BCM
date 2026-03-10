@@ -23,6 +23,7 @@
 #include "InputManager.h"
 #include "Events.h"
 #include "EventQueue_interface.h"
+#include "VehicleManager.h"
 #include "StdTypes.h"
 #include "DIO_interface.h"
 #include "ADC_interface.h"

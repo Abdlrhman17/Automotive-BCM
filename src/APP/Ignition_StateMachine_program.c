@@ -4,6 +4,7 @@
 #include "StdTypes.h"
 #include "Ignition_StateMachine_interface.h"
 #include "EventQueue_interface.h"
+#include "ECU_StateMachine_interface.h"
 #include "Trace.h"
 
 

@@ -6,6 +6,7 @@
 #include "DIO_interface.h"
 #include "EventQueue_interface.h"
 #include "Events.h"
+#include "Trace.h"
 #include "StdTypes.h"
 
 

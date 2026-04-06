@@ -18,6 +18,7 @@
 // Total number of fault types
 #define FAULT_COUNT  6 
 
+
 // Fault detection thresholds
 #define IGNITION_SIGNAL_MIN    0
 #define IGNITION_SIGNAL_MAX    3
@@ -64,6 +65,7 @@ static u8 CheckSpeedSignalFault(void);
 static void ActivateFault(fault_id_t fault_id);
 static void ClearFaultInternal(fault_id_t fault_id);
 
+// An Array that contains all functions to check for any faluts
 u8 (*CheckFaultArr[FAULT_COUNT])(void) = {
 	CheckIgnitionSignalFault,
 	CheckDoorSensorFault,

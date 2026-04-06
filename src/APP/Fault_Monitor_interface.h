@@ -7,6 +7,13 @@
 #include "StdTypes.h"
 #include "Faults.h"
 
+// For the macro not to be included everywhere
+#ifdef _IS_LATCED_FAULTS_ARR_INC
+
+// Latched Faults count (For nvm)
+#define LATCHED_FAULTS_COUNT	3
+
+#endif
 
 /* ============================================ */
 /*          PUBLIC FUNCTION PROTOTYPES          */

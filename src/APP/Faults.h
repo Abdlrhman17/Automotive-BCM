@@ -32,6 +32,7 @@ typedef struct
 	fault_severity_t faultSeverity;
 	fault_persistence_t faultPersistence;
 	u8 is_Active;
+	u8 occurrence_counter;
 }fault_t;
 
 #endif /* FAULTS_H_ */

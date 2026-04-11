@@ -28,7 +28,6 @@
 #define NULL_PTR ((void*)0)
 #endif
 
-
 /* ============================
    Standard Integer Types
    ============================ */

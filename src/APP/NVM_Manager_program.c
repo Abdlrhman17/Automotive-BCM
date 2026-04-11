@@ -6,7 +6,6 @@
 #include "Trace.h"
 #include "NvmStorage.h"
 #include "NVM_interface.h"
-// TODO: Add EEPROM driver include when available
 
 
 /* ============================================ */
@@ -96,23 +95,18 @@ void NVM_Manager_Init(void)
 
 void NVM_Manager_Save(void)
 {
-	// TODO: Implement NVM save
 	nvm_buffer.magic_number = NVM_MAGIC_NUMBER;
 	nvm_buffer.checksum = CalculateChecksum(&nvm_buffer);
 	
-	// TODO: Write to EEPROM
-	// EEPROM_Write(NVM_BASE_ADDRESS, sizeof(*nvm_buffer));
-	
+	NVM_WriteBlockAsync(NVM_FAULT_TABLE_INDX, nvm_buffer.faultsArray);	
 	TRACE_INFO(TRACE_ECU, "NVM data saved");
 }
 
 nvm_storage_t*  NVM_Manager_Load(void)
 {
-	// TODO: Implement NVM load
-	
 	nvm_storage_t storage;
 	
-	// TODO: Read from EEPROM
+	NVM_ReadBlock(NVM_FAULT_TABLE_INDX, &storage);
 	
 	// Validate data
 	if(ValidateNVMData(&storage))
@@ -128,18 +122,6 @@ nvm_storage_t*  NVM_Manager_Load(void)
 	}
 }
 
-void NVM_Manager_Clear(void)
-{
-	// TODO: Implement NVM clear
-	
-	// Erase magic number to invalidate data
-	u16 erased = 0xFFFF;
-	// EEPROM_Write(NVM_BASE_ADDRESS, (u8*)&erased, sizeof(erased));
-	
-	nvm_valid = FALSE;
-	
-	TRACE_INFO(TRACE_ECU, "NVM data cleared");
-}
 
 /* ============================================ */
 /*      PRIVATE FUNCTION IMPLEMENTATIONS        */

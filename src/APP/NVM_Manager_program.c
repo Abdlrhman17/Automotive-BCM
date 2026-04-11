@@ -5,14 +5,15 @@
 #include "Fault_Monitor_interface.h"
 #include "Trace.h"
 #include "NvmStorage.h"
+#include "NVM_interface.h"
 // TODO: Add EEPROM driver include when available
 
 
 /* ============================================ */
 /*          PRIVATE DEFINES                     */
 /* ============================================ */
-// EEPROM start address
-#define NVM_BASE_ADDRESS     0x0000
+#define NVM_FAULT_TABLE_ADDRESS		0x0000     
+#define NVM_FAULT_TABLE_INDX		0  
   
 // Data validity marker
 #define NVM_MAGIC_NUMBER     0xABCD   
@@ -34,6 +35,10 @@ static nvm_storage_t nvm_buffer;
 // Is NVM data valid ?
 static u8 nvm_valid = FALSE;
 
+NVM_BlockConfig_t NVM_Blocks[] =
+{
+	[NVM_FAULT_TABLE_INDX] = {NVM_FAULT_TABLE_ADDRESS,sizeof(nvm_storage_t)}
+};
 
 /* ============================================ */
 /*       PRIVATE FUNCTION PROTOTYPES            */

@@ -5,6 +5,7 @@
 #include "Ignition_StateMachine_interface.h"
 #include "EventQueue_interface.h"
 #include "ECU_StateMachine_interface.h"
+#include "NVM_Manager_interface.h"
 #include "Trace.h"
 
 
@@ -24,9 +25,6 @@ static ignition_state_t Global_current_ignition_state = IGNITION_OFF;
 
 //	Counter to get back from IGNITION_START to IGNITION_ON
 static u16 start_position_counter = 0;
-
-//	Ref to the Global event Queue
-extern Events_Queue_t GlobalEventQueue;
 
 
 /* ============================================ */
@@ -65,6 +63,9 @@ void Ignition_StateMachine_ProcessEvent(ecu_event_t event)
 		else if(event == IGNITION_OFF_EVENT)
 		{
 			Global_current_ignition_state = IGNITION_OFF;	//ACC -> OFF
+			// Save to Nvm
+			NVM_Manager_Save();
+			
 			TRACE_INFO(TRACE_IGNITION,"Ignition to IGNITION_OFF");
 		}
 		else
@@ -124,7 +125,7 @@ void Ignition_StateMachine_Update(void)
 		else
 		{
 			start_position_counter = START_CRANK_DURATION_MS; 
-			EVENTQUEUE_u8enQueue(&GlobalEventQueue,IGNITION_ON_EVENT);
+			EVENTQUEUE_u8enQueue(EventQueue_Get(),IGNITION_ON_EVENT);
 			TRACE_INFO(TRACE_IGNITION, "START auto-returned to ON");
 		}
 	}

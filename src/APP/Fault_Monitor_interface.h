@@ -15,6 +15,10 @@
 
 #endif
 
+// Total number of fault types
+#define FAULT_COUNT  6
+
+
 /* ============================================ */
 /*          PUBLIC FUNCTION PROTOTYPES          */
 /* ============================================ */
@@ -43,10 +47,16 @@ fault_t Fault_Monitor_GetFault(fault_id_t fault_id);
 u8 Fault_Monitor_HasSafetyFaults(void);
 
 /**
+ * Check if any LATCHED faults are active
+ */
+u8 Fault_Monitor_HasLatchedFaults(void);
+
+/**
  * Clear a specific fault (if allowed)
  * Clear latched faults after repair
  */
 void Fault_Monitor_ClearFault(fault_id_t fault_id);
 
+fault_t* fault_Moniter_GetFaultsTable(void);
 
 #endif /* FAULT_MONITOR_INTERFACE_H_ */

@@ -61,12 +61,6 @@ static input_state_t blinker_stalk_state;
 static input_state_t wiper_stalk_state;
 static input_state_t speed_signal_state;
 
-// Reference to the global event queue (extern or passed in Init)
-extern Events_Queue_t GlobalEventQueue;
-
-// Reference to the Global Var to the vehicle movement state
-extern vehicle_movement_state_t Global_vehicle_movement;
-
 
 /* ============================================ */
 /*          SIMULATION VARIABLES                */
@@ -281,19 +275,19 @@ static void ProcessIgnitionInput(void)
 		switch(ignition_state.previous_value)
 		{
 			case 0:	//OFF
-			EVENTQUEUE_u8enQueue(&GlobalEventQueue, IGNITION_OFF_EVENT);
+			EVENTQUEUE_u8enQueue(EventQueue_Get(), IGNITION_OFF_EVENT);
 			break;
 			
 			case 1:	//ACC
-			EVENTQUEUE_u8enQueue(&GlobalEventQueue, IGNITION_ACC_EVENT);
+			EVENTQUEUE_u8enQueue(EventQueue_Get(), IGNITION_ACC_EVENT);
 			break;
 			
 			case 2:	//ON
-			EVENTQUEUE_u8enQueue(&GlobalEventQueue, IGNITION_ON_EVENT);
+			EVENTQUEUE_u8enQueue(EventQueue_Get(), IGNITION_ON_EVENT);
 			break;
 			
 			case 3:	//START
-			EVENTQUEUE_u8enQueue(&GlobalEventQueue, IGNITION_START_EVENT);
+			EVENTQUEUE_u8enQueue(EventQueue_Get(), IGNITION_START_EVENT);
 			break;
 		}
 	}
@@ -309,11 +303,11 @@ static void ProcessDoorInput(void)
 		switch(door_state.previous_value)
 		{
 			case 0:		//DOORS CLOSED
-			EVENTQUEUE_u8enQueue(&GlobalEventQueue, DOOR_CLOSE_EVENT);
+			EVENTQUEUE_u8enQueue(EventQueue_Get(), DOOR_CLOSE_EVENT);
 			break;
 			
 			case 1:		//DOORS OPEN
-			EVENTQUEUE_u8enQueue(&GlobalEventQueue, DOOR_OPEN_EVENT);
+			EVENTQUEUE_u8enQueue(EventQueue_Get(), DOOR_OPEN_EVENT);
 			break;
 		}
 	}
@@ -328,11 +322,11 @@ static void ProcessLockButtonInput(void)
 	{
 		 if(lock_button_state.previous_value == 0)  // LOCK
 		 {
-			 EVENTQUEUE_u8enQueue(&GlobalEventQueue, LOCK_REQUEST_EVENT);
+			 EVENTQUEUE_u8enQueue(EventQueue_Get(), LOCK_REQUEST_EVENT);
 		 }
 		 else if(lock_button_state.previous_value == 1)  // UNLOCK
 		 {
-			 EVENTQUEUE_u8enQueue(&GlobalEventQueue, UNLOCK_REQUEST_EVENT);
+			 EVENTQUEUE_u8enQueue(EventQueue_Get(), UNLOCK_REQUEST_EVENT);
 		 }
 	}
 }
@@ -347,19 +341,19 @@ static void ProcessBlinkerInput(void)
 		switch(blinker_stalk_state.previous_value)
 		{
 			case 0:		//NEUTRAL
-			EVENTQUEUE_u8enQueue(&GlobalEventQueue,BLINKER_OFF_REQUEST);
+			EVENTQUEUE_u8enQueue(EventQueue_Get(),BLINKER_OFF_REQUEST);
 			break;
 			
 			case 1:		//LEFT
-			EVENTQUEUE_u8enQueue(&GlobalEventQueue,LEFT_BLINKER_REQUEST);
+			EVENTQUEUE_u8enQueue(EventQueue_Get(),LEFT_BLINKER_REQUEST);
 			break;
 			
 			case 2:		//RIGHT
-			EVENTQUEUE_u8enQueue(&GlobalEventQueue,RIGHT_BLINKER_REQUEST);
+			EVENTQUEUE_u8enQueue(EventQueue_Get(),RIGHT_BLINKER_REQUEST);
 			break;
 			
 			case 3:		//HAZARD
-			EVENTQUEUE_u8enQueue(&GlobalEventQueue,HAZARD_REQUEST);
+			EVENTQUEUE_u8enQueue(EventQueue_Get(),HAZARD_REQUEST);
 			break;
 		}
 	}
@@ -375,19 +369,19 @@ static void ProcessWiperInput(void)
 		switch(wiper_stalk_state.previous_value)
 		{
 			case 0:		//OFF
-			EVENTQUEUE_u8enQueue(&GlobalEventQueue,WIPER_OFF_REQUEST);
+			EVENTQUEUE_u8enQueue(EventQueue_Get(),WIPER_OFF_REQUEST);
 			break;
 			
 			case 1:		//INT
-			EVENTQUEUE_u8enQueue(&GlobalEventQueue,WIPER_INT_REQUEST);
+			EVENTQUEUE_u8enQueue(EventQueue_Get(),WIPER_INT_REQUEST);
 			break;
 			
 			case 2:		//LOW
-			EVENTQUEUE_u8enQueue(&GlobalEventQueue,WIPER_LOW_REQUEST);
+			EVENTQUEUE_u8enQueue(EventQueue_Get(),WIPER_LOW_REQUEST);
 			break;
 			
 			case 3:		//HIGH
-			EVENTQUEUE_u8enQueue(&GlobalEventQueue,WIPER_HIGH_REQUEST);
+			EVENTQUEUE_u8enQueue(EventQueue_Get(),WIPER_HIGH_REQUEST);
 			break;
 		}
 	}
@@ -403,11 +397,11 @@ static void ProcessSpeedInput(void)
 		switch(speed_signal_state.previous_value)
 		{
 			case 0:		//STOPPED
-			EVENTQUEUE_u8enQueue(&GlobalEventQueue,VEHICLE_STOPPED_EVENT);
+			EVENTQUEUE_u8enQueue(EventQueue_Get(),VEHICLE_STOPPED_EVENT);
 			break;
 			
 			case 1:		//MOVING
-			EVENTQUEUE_u8enQueue(&GlobalEventQueue,VEHICLE_MOVING_EVENT);
+			EVENTQUEUE_u8enQueue(EventQueue_Get(),VEHICLE_MOVING_EVENT);
 			break;
 		}
 	}

@@ -74,6 +74,10 @@ void Blinker_StateMachine_ProcessEvent(ecu_event_t event)
 			Global_current_blinker_state = BLINKERS_OFF;
 			TRACE_INFO(TRACE_BLINKER,"Blinkers OFF (Diag)");
 			break;
+			
+			default:
+			// Do Nothing
+			break;
 		}
 	}
 	else
@@ -116,6 +120,10 @@ void Blinker_StateMachine_ProcessEvent(ecu_event_t event)
 			Global_previous_blinker_state = Global_current_blinker_state;
 			Global_current_blinker_state = BLINKERS_OFF;
 			TRACE_INFO(TRACE_BLINKER,"Blinkers OFF");
+			break;
+			
+			default:
+			// Do Nothing
 			break;
 		}
 	}

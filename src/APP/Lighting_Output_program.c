@@ -85,6 +85,10 @@ void Lighting_Output_Update(void)
 				DIO_WritePin(FRONT_LEFT_BLINKER_PIN,blink_output_state);
 				DIO_WritePin(REAR_LEFT_BLINKER_PIN,blink_output_state);
 				break;
+				
+				default:
+				// Do Nothing
+				break;
 			}
 		}
 	}

@@ -8,17 +8,13 @@
 #include "Lock_StateMachine_interface.h"
 #include "ECU_StateMachine_interface.h"
 #include "Events.h"
+#include "NVM_Manager_interface.h"
+#include "config.h"
 #include "Trace.h"
-#include "DIO_interface.h"
-// TODO: Add includes for reading inputs/outputs
 
 /* ============================================ */
 /*          PRIVATE DEFINES                     */
 /* ============================================ */
-// Total number of fault types
-#define FAULT_COUNT  6 
-
-
 // Fault detection thresholds
 #define IGNITION_SIGNAL_MIN    0
 #define IGNITION_SIGNAL_MAX    3
@@ -29,9 +25,6 @@
 /* ============================================ */
 /*          PRIVATE VARIABLES                   */
 /* ============================================ */
-// Fault table - tracks all faults
-static fault_t fault_table[FAULT_COUNT];
-
 // Counts changes in the door sensor in 1 Second
 static u8 door_sensor_change_counter = 0;
 
@@ -50,8 +43,9 @@ static u8 door_lock_change_counter = 0;
 // Counter for monitoring door lock debouncing window
 static u16 lock_debounce_counter = 0;
 
-// Reference to global event queue
-extern Events_Queue_t GlobalEventQueue;
+// Fault table - tracks all faults
+static fault_t GlobalFaultsTable[FAULT_COUNT];
+
 
 /* ============================================ */
 /*       PRIVATE FUNCTION PROTOTYPES            */
@@ -65,7 +59,7 @@ static u8 CheckSpeedSignalFault(void);
 static void ActivateFault(fault_id_t fault_id);
 static void ClearFaultInternal(fault_id_t fault_id);
 
-// An Array that contains all functions to check for any faluts
+// An Array that contains all functions to check for any faults
 u8 (*CheckFaultArr[FAULT_COUNT])(void) = {
 	CheckIgnitionSignalFault,
 	CheckDoorSensorFault,
@@ -81,43 +75,51 @@ u8 (*CheckFaultArr[FAULT_COUNT])(void) = {
 
 void Fault_Monitor_Init(void)
 {
-	// TODO: Load faults from NVM if there is any
+	// Load faults from NVM if there is any
+	nvm_storage_t* nvm = NVM_Manager_GetBuffer();
+	
 	
     /* IGNITION SIGNAL FAULT */
-    fault_table[IGNITION_SIGNAL_FAULT].faultID = IGNITION_SIGNAL_FAULT;
-    fault_table[IGNITION_SIGNAL_FAULT].faultSeverity = FAULT_SEVERITY_CRITICAL;
-    fault_table[IGNITION_SIGNAL_FAULT].faultPersistence = FAULT_LATCHED;
-    fault_table[IGNITION_SIGNAL_FAULT].is_Active = FALSE;
+    GlobalFaultsTable[IGNITION_SIGNAL_FAULT].faultID = IGNITION_SIGNAL_FAULT;
+    GlobalFaultsTable[IGNITION_SIGNAL_FAULT].faultSeverity = FAULT_SEVERITY_CRITICAL;
+    GlobalFaultsTable[IGNITION_SIGNAL_FAULT].faultPersistence = FAULT_LATCHED;
+    GlobalFaultsTable[IGNITION_SIGNAL_FAULT].is_Active = nvm->faultsArray[IGNITION_SIGNAL_FAULT].is_active;
+	GlobalFaultsTable[IGNITION_SIGNAL_FAULT].occurrence_counter = nvm->faultsArray[IGNITION_SIGNAL_FAULT].occurance_counter;
 
     /* DOOR SENSOR FAULT */
-    fault_table[DOOR_SENSOR_FAULT].faultID = DOOR_SENSOR_FAULT;
-    fault_table[DOOR_SENSOR_FAULT].faultSeverity = FAULT_SEVERITY_NON_CRITICAL;
-    fault_table[DOOR_SENSOR_FAULT].faultPersistence = FAULT_VOLATILE;
-    fault_table[DOOR_SENSOR_FAULT].is_Active = FALSE;
+    GlobalFaultsTable[DOOR_SENSOR_FAULT].faultID = DOOR_SENSOR_FAULT;
+    GlobalFaultsTable[DOOR_SENSOR_FAULT].faultSeverity = FAULT_SEVERITY_NON_CRITICAL;
+    GlobalFaultsTable[DOOR_SENSOR_FAULT].faultPersistence = FAULT_VOLATILE;
+    GlobalFaultsTable[DOOR_SENSOR_FAULT].is_Active = FALSE;
+	GlobalFaultsTable[DOOR_SENSOR_FAULT].occurrence_counter = 0;
 
     /* LOCK ACTUATOR FAULT */
-    fault_table[LOCK_ACTUATOR_FAULT].faultID = LOCK_ACTUATOR_FAULT;
-    fault_table[LOCK_ACTUATOR_FAULT].faultSeverity = FAULT_SEVERITY_CRITICAL;
-    fault_table[LOCK_ACTUATOR_FAULT].faultPersistence = FAULT_LATCHED;
-    fault_table[LOCK_ACTUATOR_FAULT].is_Active = FALSE;
+    GlobalFaultsTable[LOCK_ACTUATOR_FAULT].faultID = LOCK_ACTUATOR_FAULT;
+    GlobalFaultsTable[LOCK_ACTUATOR_FAULT].faultSeverity = FAULT_SEVERITY_CRITICAL;
+    GlobalFaultsTable[LOCK_ACTUATOR_FAULT].faultPersistence = FAULT_LATCHED;
+    GlobalFaultsTable[LOCK_ACTUATOR_FAULT].is_Active = nvm->faultsArray[LOCK_ACTUATOR_FAULT].is_active;
+	GlobalFaultsTable[LOCK_ACTUATOR_FAULT].occurrence_counter = nvm->faultsArray[LOCK_ACTUATOR_FAULT].occurance_counter;
 
     /* BLINKER OUTPUT FAULT */
-    fault_table[BLINKER_OUTPUT_FAULT].faultID = BLINKER_OUTPUT_FAULT;
-    fault_table[BLINKER_OUTPUT_FAULT].faultSeverity = FAULT_SEVERITY_NON_CRITICAL;
-    fault_table[BLINKER_OUTPUT_FAULT].faultPersistence = FAULT_VOLATILE;
-    fault_table[BLINKER_OUTPUT_FAULT].is_Active = FALSE;
+    GlobalFaultsTable[BLINKER_OUTPUT_FAULT].faultID = BLINKER_OUTPUT_FAULT;
+    GlobalFaultsTable[BLINKER_OUTPUT_FAULT].faultSeverity = FAULT_SEVERITY_NON_CRITICAL;
+    GlobalFaultsTable[BLINKER_OUTPUT_FAULT].faultPersistence = FAULT_VOLATILE;
+    GlobalFaultsTable[BLINKER_OUTPUT_FAULT].is_Active = FALSE;
+	GlobalFaultsTable[BLINKER_OUTPUT_FAULT].occurrence_counter = 0;
 
     /* WIPER OUTPUT FAULT */
-    fault_table[WIPER_OUTPUT_FAULT].faultID = WIPER_OUTPUT_FAULT;
-    fault_table[WIPER_OUTPUT_FAULT].faultSeverity = FAULT_SEVERITY_NON_CRITICAL;
-    fault_table[WIPER_OUTPUT_FAULT].faultPersistence = FAULT_VOLATILE;
-    fault_table[WIPER_OUTPUT_FAULT].is_Active = FALSE;
+    GlobalFaultsTable[WIPER_OUTPUT_FAULT].faultID = WIPER_OUTPUT_FAULT;
+    GlobalFaultsTable[WIPER_OUTPUT_FAULT].faultSeverity = FAULT_SEVERITY_NON_CRITICAL;
+    GlobalFaultsTable[WIPER_OUTPUT_FAULT].faultPersistence = FAULT_VOLATILE;
+    GlobalFaultsTable[WIPER_OUTPUT_FAULT].is_Active = FALSE;
+	GlobalFaultsTable[WIPER_OUTPUT_FAULT].occurrence_counter = 0;
 
     /* SPEED SIGNAL FAULT */
-    fault_table[SPEED_SIGNAL_FAULT].faultID = SPEED_SIGNAL_FAULT;
-    fault_table[SPEED_SIGNAL_FAULT].faultSeverity = FAULT_SEVERITY_SAFETY;
-    fault_table[SPEED_SIGNAL_FAULT].faultPersistence = FAULT_LATCHED;
-    fault_table[SPEED_SIGNAL_FAULT].is_Active = FALSE;
+    GlobalFaultsTable[SPEED_SIGNAL_FAULT].faultID = SPEED_SIGNAL_FAULT;
+    GlobalFaultsTable[SPEED_SIGNAL_FAULT].faultSeverity = FAULT_SEVERITY_SAFETY;
+    GlobalFaultsTable[SPEED_SIGNAL_FAULT].faultPersistence = FAULT_LATCHED;
+    GlobalFaultsTable[SPEED_SIGNAL_FAULT].is_Active = nvm->faultsArray[SPEED_SIGNAL_FAULT].is_active;
+	GlobalFaultsTable[SPEED_SIGNAL_FAULT].occurrence_counter = nvm->faultsArray[SPEED_SIGNAL_FAULT].occurance_counter;
 }
 
 void Fault_Monitor_Update(void)
@@ -132,7 +134,7 @@ void Fault_Monitor_Update(void)
 
 fault_t Fault_Monitor_GetFault(fault_id_t fault_id)
 {
-	return fault_table[fault_id];
+	return GlobalFaultsTable[fault_id];
 }
 
 u8 Fault_Monitor_HasSafetyFaults(void)
@@ -140,9 +142,9 @@ u8 Fault_Monitor_HasSafetyFaults(void)
 	u8 i;
 	for(i = 0; i < FAULT_COUNT; ++i)
 	{
-		if(fault_table[i].is_Active)
+		if(GlobalFaultsTable[i].is_Active)
 		{
-			if(fault_table[i].faultSeverity == FAULT_SEVERITY_SAFETY)
+			if(GlobalFaultsTable[i].faultSeverity == FAULT_SEVERITY_SAFETY)
 			{
 				return TRUE;
 			}
@@ -151,10 +153,23 @@ u8 Fault_Monitor_HasSafetyFaults(void)
 	return FALSE;
 }
 
+u8 Fault_Monitor_HasLatchedFaults(void)
+{
+	nvm_storage_t* nvm = NVM_Manager_GetBuffer();
+	u8 i;
+	for(i = 0; i < LATCHED_FAULTS_COUNT; ++i)
+	{
+		if(nvm->faultsArray[i].is_active)
+		{
+			return TRUE;
+		}
+	}
+	return FALSE;
+}
+
 void Fault_Monitor_ClearFault(fault_id_t fault_id)
 {
-	if(fault_table[fault_id].faultPersistence == FAULT_LATCHED && 
-	ECU_GetOperationalState() == ECU_OP_STATE_DIAGNOSTIC)
+	if(ECU_GetOperationalState() == ECU_OP_STATE_DIAGNOSTIC)
 	{
 		if(CheckFaultArr[fault_id]() == TRUE) //Fault still present
 		{
@@ -162,10 +177,29 @@ void Fault_Monitor_ClearFault(fault_id_t fault_id)
 		}
 		else	// Fault is not active
 		{
-			fault_table[fault_id].is_Active = FALSE;
-			TRACE_INFO(TRACE_FAULT, "Latched fault manually cleared");
+			if(GlobalFaultsTable[fault_id].faultPersistence == FAULT_LATCHED)
+			{
+				// Clear Fault from Nvm
+				nvm_storage_t* nvm = NVM_Manager_GetBuffer();
+				nvm->faultsArray[fault_id].is_active = FALSE;
+				
+				// Save To Nvm
+				NVM_Manager_Save();
+			}
+			else
+			{
+				GlobalFaultsTable[fault_id].is_Active = FALSE;
+				TRACE_INFO(TRACE_FAULT, "Latched fault manually cleared");
+			}
+			
+			EVENTQUEUE_u8enQueue(EventQueue_Get(), FAULT_CLEARED_EVENT);
 		}
 	}
+}
+
+fault_t* fault_Moniter_GetFaultsTable(void)
+{
+	return &GlobalFaultsTable[FAULT_COUNT];
 }
 
 
@@ -182,7 +216,7 @@ static u8 CheckIgnitionSignalFault(void)
 	
 	if(fault_present)
 	{
-		if(!fault_table[IGNITION_SIGNAL_FAULT].is_Active)
+		if(!GlobalFaultsTable[IGNITION_SIGNAL_FAULT].is_Active)
 		{
 			ActivateFault(IGNITION_SIGNAL_FAULT);
 		}
@@ -190,7 +224,7 @@ static u8 CheckIgnitionSignalFault(void)
 	}
 	else
 	{
-		if(fault_table[IGNITION_SIGNAL_FAULT].is_Active)
+		if(GlobalFaultsTable[IGNITION_SIGNAL_FAULT].is_Active)
 		{
 			ClearFaultInternal(IGNITION_SIGNAL_FAULT);
 		}
@@ -216,7 +250,7 @@ static u8 CheckDoorSensorFault(void)
 	{
 		if(door_sensor_change_counter >= DOOR_DEBOUNCE_FAIL_THRESHOLD)
 		{
-			if(!fault_table[DOOR_SENSOR_FAULT].is_Active)
+			if(!GlobalFaultsTable[DOOR_SENSOR_FAULT].is_Active)
 			{
 				ActivateFault(DOOR_SENSOR_FAULT);
 			}
@@ -226,7 +260,7 @@ static u8 CheckDoorSensorFault(void)
 		else
 		{
 			// No fault: Clear if was active
-			if(fault_table[DOOR_SENSOR_FAULT].is_Active)
+			if(GlobalFaultsTable[DOOR_SENSOR_FAULT].is_Active)
 			{
 				ClearFaultInternal(DOOR_SENSOR_FAULT);
 			}
@@ -257,7 +291,7 @@ static u8 CheckLockActuatorFault(void)
 	{
 		if(door_lock_change_counter >= LOCK_DEBOUNCE_FAIL_THRESHOLD)
 		{
-			if(!fault_table[LOCK_ACTUATOR_FAULT].is_Active)
+			if(!GlobalFaultsTable[LOCK_ACTUATOR_FAULT].is_Active)
 			{
 				ActivateFault(LOCK_ACTUATOR_FAULT);
 			}
@@ -267,7 +301,7 @@ static u8 CheckLockActuatorFault(void)
 		else
 		{
 			// No fault: Clear if was active
-			if(fault_table[LOCK_ACTUATOR_FAULT].is_Active)
+			if(GlobalFaultsTable[LOCK_ACTUATOR_FAULT].is_Active)
 			{
 				ClearFaultInternal(LOCK_ACTUATOR_FAULT);
 			}
@@ -308,30 +342,43 @@ static u8 CheckSpeedSignalFault(void)
 
 static void ActivateFault(fault_id_t fault_id)
 {
-	fault_table[fault_id].is_Active = TRUE;
+	nvm_storage_t* nvm = NVM_Manager_GetBuffer();
+	
+	GlobalFaultsTable[fault_id].is_Active = TRUE;
+	GlobalFaultsTable[fault_id].occurrence_counter++;
 	
 	TRACE_ERROR(TRACE_FAULT, "Fault activated");
 	
-	if(fault_table[fault_id].faultSeverity == FAULT_SEVERITY_SAFETY)
+	// Log to NVM for latched faults
+	if(GlobalFaultsTable[fault_id].faultPersistence == FAULT_LATCHED)
 	{
-		EVENTQUEUE_u8enQueue(&GlobalEventQueue, FAULT_CRITICAL_EVENT);
-		TRACE_ERROR(TRACE_FAULT, "SAFETY fault - ECU entering DEGRADED");
+		nvm->faultsArray[fault_id].is_active = TRUE;
+		nvm->faultsArray[fault_id].occurance_counter++;
+		nvm->faultsArray[fault_id].last_lock_state = Lock_GetState();
+		nvm->faultsArray[fault_id].last_op_state = ECU_GetOperationalState();
+		
+		// Save fault to Nvm
+		NVM_Manager_Save();
 	}
 	
-	// TODO: Log to NVM for latched faults
+	if(GlobalFaultsTable[fault_id].faultSeverity == FAULT_SEVERITY_SAFETY)
+	{
+		EVENTQUEUE_u8enQueue(EventQueue_Get(), FAULT_CRITICAL_EVENT);
+		TRACE_ERROR(TRACE_FAULT, "SAFETY fault - ECU entering DEGRADED");
+	}
 }
 
 static void ClearFaultInternal(fault_id_t fault_id)
 {
-	if(fault_table[fault_id].faultPersistence == FAULT_VOLATILE)
+	if(GlobalFaultsTable[fault_id].faultPersistence == FAULT_VOLATILE)
 	{
-		fault_table[fault_id].is_Active = FALSE;
+		GlobalFaultsTable[fault_id].is_Active = FALSE;
 		TRACE_INFO(TRACE_FAULT, "Volatile fault cleared");
 		
 		// Check if no more SAFETY faults active
 		if(!Fault_Monitor_HasSafetyFaults())
 		{
-			EVENTQUEUE_u8enQueue(&GlobalEventQueue, FAULT_CLEARED_EVENT);
+			EVENTQUEUE_u8enQueue(EventQueue_Get(), FAULT_CLEARED_EVENT);
 			TRACE_INFO(TRACE_FAULT, "All safety faults cleared");
 		}
 	}

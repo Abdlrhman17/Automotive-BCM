@@ -6,6 +6,8 @@
 #include "EventQueue_interface.h"
 #include "InputManager.h"
 #include "VehicleManager.h"
+#include "NVM_Manager_interface.h"
+#include "VehicleMovement_StateMachine_interface.h"
 #include "Trace.h"
 
 
@@ -22,12 +24,8 @@ static ecu_state_t Global_current_ecu_state = ECU_STATE_STARTUP;					// STARTUP/
 static ecu_operational_state_t Global_operational_state = ECU_OP_STATE_NORMAL;		// NORMAL/DIAGNOSTIC/DEGRADED
 static u32 diagnostic_timeout_counter = 0;											// Countdown timer for diag timeout
 
-// Ref to GLobal Events Queue
-extern Events_Queue_t GlobalEventQueue;
-
-// Global vehicle movement state Var
-extern vehicle_movement_state_t Global_vehicle_movement;
-
+//Reset Function
+void(*resetFunc)(void) = 0;
 
 /* ============================================ */
 /*       PUBLIC FUNCTION IMPLEMENTATIONS        */
@@ -36,7 +34,7 @@ extern vehicle_movement_state_t Global_vehicle_movement;
 void ECU_StateMachine_Init(void)
 {
 	Global_current_ecu_state = ECU_STATE_ACTIVE;
-	if(TRUE) // TODO: Check for faults in NVM
+	if(!Fault_Monitor_HasLatchedFaults())
 	{
 		Global_operational_state = ECU_OP_STATE_NORMAL;
 	}
@@ -47,14 +45,16 @@ void ECU_StateMachine_Init(void)
 	diagnostic_timeout_counter = 0;
 	TRACE_INFO(TRACE_ECU,"ECU Initialized");
 	
-	//TODO: LOAD NVM DATA	
 }
 
 void ECU_StateMachine_ProcessEvent(ecu_event_t event)
 {
 	if(event == ECU_RESET_EVENT)
 	{
-		//TODO: ISR to Reset
+		// Save to Nvm
+		NVM_Manager_Save();
+		
+		resetFunc();				
 	}
 	switch(Global_operational_state)
 	{
@@ -63,7 +63,7 @@ void ECU_StateMachine_ProcessEvent(ecu_event_t event)
 			{
 				case TECHNICIAN_DIAG_REQUEST:
 				// TODO: check parameters to enter diag mode
-				if(Global_vehicle_movement == STOPPED)
+				if(VehicleMovement_GetState() == STOPPED)
 				{
 					Global_operational_state = ECU_OP_STATE_DIAGNOSTIC;
 					diagnostic_timeout_counter = DIAGNOSTIC_TIMEOUT_MS;
@@ -74,9 +74,14 @@ void ECU_StateMachine_ProcessEvent(ecu_event_t event)
 				case FAULT_CRITICAL_EVENT:
 				Global_operational_state = ECU_OP_STATE_DEGRADED;
 				
-				// TODO: Log fault to NVM
+				// Log fault to NVM
+				NVM_Manager_Save();
 				
 				TRACE_INFO(TRACE_ECU,"Entered Degraded mode");
+				break;
+				
+				default:
+				// Do Nothing
 				break;
 			}
 			
@@ -94,6 +99,13 @@ void ECU_StateMachine_ProcessEvent(ecu_event_t event)
 				case FAULT_CRITICAL_EVENT:
 				Global_operational_state = ECU_OP_STATE_DEGRADED;
 				TRACE_ERROR(TRACE_ECU,"Entered Degraded mode");
+				
+				// Log fault to NVM
+				NVM_Manager_Save();
+				break;
+				
+				default:
+				// Do Nothing
 				break;
 			}
 		
@@ -104,23 +116,28 @@ void ECU_StateMachine_ProcessEvent(ecu_event_t event)
 		{
 			case FAULT_CLEARED_EVENT:
 			Global_operational_state = ECU_OP_STATE_NORMAL;
-			
-			// TODO: Clear fault from NVM
-			
 			TRACE_INFO(TRACE_ECU,"Fault cleared");
 			break;
 			
 			case TECHNICIAN_DIAG_REQUEST:
 			// TODO: check parameters to enter diag mode
-			if(Global_vehicle_movement == STOPPED)
+			if(VehicleMovement_GetState() == STOPPED)
 			{
 				Global_operational_state = ECU_OP_STATE_DIAGNOSTIC;
 				diagnostic_timeout_counter = DIAGNOSTIC_TIMEOUT_MS;
 				TRACE_INFO(TRACE_ECU,"Entered Diag mode");
 			}
 			break;
+			
+			default:
+			// Do Nothing
+			break;
 		}
 	    break;	
+		
+		default:
+		// Do Nothing
+		break;
 	}
 }
 
@@ -134,7 +151,7 @@ void ECU_StateMachine_Update(void)
 		}
 		else
 		{
-			EVENTQUEUE_u8enQueue(&GlobalEventQueue,DIAG_TIMEOUT_EVENT);
+			EVENTQUEUE_u8enQueue(EventQueue_Get(),DIAG_TIMEOUT_EVENT);
 		}
 	}
 }

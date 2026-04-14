@@ -9,15 +9,11 @@
 #include "Wiper_StateMachine_interface.h"
 #include "Blinker_StateMachine_interface.h"
 
-// GLobal Events Queue
-extern Events_Queue_t GlobalEventQueue;
-
-
 void EventDispatcher_ProcessEvents(void)
 {
 	 ecu_event_t event;
 	 
-	 while(EVENTQUEUE_u8deQueue(&GlobalEventQueue, &event) == OK)
+	 while(EVENTQUEUE_u8deQueue(EventQueue_Get(), &event) == OK)
 	 {
 		 switch(event)
 		 {

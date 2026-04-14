@@ -8,6 +8,7 @@
 #include "ECU_StateMachine_interface.h"
 #include "DiagnosticPolicy.h"
 #include "EventQueue_interface.h"
+#include "VehicleMovement_StateMachine_interface.h"
 
 
 /* ============================================ */
@@ -26,12 +27,6 @@ static door_lock_state_t Global_current_lock_state = UNLOCKED;
 // Counter for the Auto Lock
 static u16 auto_lock_counter = 0; 
 
-// Ref to Global Event Queue
-extern Events_Queue_t GlobalEventQueue;
-
-// Ref to Global Vehicle state
-extern vehicle_movement_state_t Global_vehicle_movement;
-
 
 /* ============================================ */
 /*       PUBLIC FUNCTION IMPLEMENTATIONS        */
@@ -39,10 +34,11 @@ extern vehicle_movement_state_t Global_vehicle_movement;
 
 void Lock_StateMachine_Init(void)
 {
-	Global_current_lock_state = UNLOCKED;
+	Global_current_lock_state = LOCKED;
 	auto_lock_counter = 0;
 	
 	// TODO: Load last lock state from NVM
+	// TODO: Add a Block in Nvm that holds the last known lock state
 
 	TRACE_INFO(TRACE_LOCK,"Lock Initialized");
 }
@@ -61,6 +57,10 @@ void Lock_StateMachine_ProcessEvent(ecu_event_t event)
 			case UNLOCK_REQUEST_EVENT:
 			Global_current_lock_state = UNLOCKED;	// UNLOCKED
 			TRACE_INFO(TRACE_LOCK,"Door Unlocked in DIAG");
+			break;
+			
+			default:
+			// Do Nothing
 			break;
 		}
 	}
@@ -111,7 +111,7 @@ void Lock_StateMachine_Update(void)
 	// Auto-lock feature: Lock after timeout when stopped
 	if(Global_current_lock_state == UNLOCKED)
 	{
-		if(Global_vehicle_movement == STOPPED)
+		if(VehicleMovement_GetState() == STOPPED)
 		{
 			if(auto_lock_counter < AUTO_LOCK_TIMEOUT_MS)
 			{
@@ -120,7 +120,7 @@ void Lock_StateMachine_Update(void)
 			else
 			{
 				// Timeout reached - generate lock request
-				EVENTQUEUE_u8enQueue(&GlobalEventQueue, LOCK_REQUEST_EVENT);
+				EVENTQUEUE_u8enQueue(EventQueue_Get(), LOCK_REQUEST_EVENT);
 				auto_lock_counter = 0;
 			}
 		}

@@ -33,9 +33,6 @@ static door_lock_state_t prev_Lock_state = LOCKED;
 // Local Var to determine motor activity (Essential for control)
 static u8 motor_active = 0;
 
-// Ref to GLobal Events Queue
-extern Events_Queue_t GlobalEventQueue;
-
 
 /* ============================================ */
 /*       PUBLIC FUNCTION IMPLEMENTATIONS        */

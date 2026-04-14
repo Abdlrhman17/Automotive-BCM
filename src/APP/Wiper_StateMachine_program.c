@@ -22,9 +22,6 @@
 // Global Var to the state of the Wipers
 static wiper_control_state_t Global_current_wiper_state = WIPERS_OFF;
 
-//	Ref to the Global event Queue
-extern Events_Queue_t GlobalEventQueue;
-
 // Counter for the Auto Wipers off if ignition changed
 static u16 auto_wiper_off_counter = 0;
 
@@ -66,6 +63,10 @@ void Wiper_StateMachine_ProcessEvent(ecu_event_t event)
 				Global_current_wiper_state = WIPERS_OFF;
 				TRACE_INFO(TRACE_WIPER,"Wipers Set to OFF (Diag)");
 				break;
+				
+				default:
+				// Do Nothing
+				break;
 			}
 		}
 		else
@@ -98,6 +99,10 @@ void Wiper_StateMachine_ProcessEvent(ecu_event_t event)
 					Global_current_wiper_state = WIPERS_HIGH;
 					TRACE_INFO(TRACE_WIPER,"Wipers Set to HIGH");
 					break;
+					
+					default:
+					// Do Nothing
+					break;
 				}
 			}
 			else
@@ -109,6 +114,10 @@ void Wiper_StateMachine_ProcessEvent(ecu_event_t event)
 			case WIPER_OFF_REQUEST:
 			Global_current_wiper_state = WIPERS_OFF;
 			TRACE_INFO(TRACE_WIPER,"Wipers Set to OFF");
+			break;
+			
+			default:
+			// Do Nothing
 			break;
 		}    
 	}
@@ -126,7 +135,7 @@ void Wiper_StateMachine_Update(void)
 			}
 			else	// Auto off counter is reached
 			{					
-				EVENTQUEUE_u8enQueue(&GlobalEventQueue,WIPER_OFF_REQUEST);
+				EVENTQUEUE_u8enQueue(EventQueue_Get(),WIPER_OFF_REQUEST);
 				auto_wiper_off_counter = 0;
 				TRACE_INFO(TRACE_WIPER,"Wipers Set to off (Auto-off)");
 			}

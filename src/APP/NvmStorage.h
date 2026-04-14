@@ -1,10 +1,6 @@
 #ifndef NVMSTORAGE_H_
 #define NVMSTORAGE_H_
 
-// Define for latched faults number
-#define _IS_LATCED_FAULTS_ARR_INC	1
-
-
 #include "StdTypes.h"
 #include "Faults.h"
 #include "Fault_Monitor_interface.h"
@@ -15,7 +11,35 @@ Data saved to NVM when :
 	Ignition off
 	Reset
 	Fault logged
+	Fault Cleared
 */
+	
+	
+typedef enum
+{
+	NVM_IDLE,
+	NVM_BUSY,
+	NVM_DONE,
+	NVM_VALID,
+	NVM_ERROR
+}NVM_Status_t;
+
+
+typedef struct
+{
+	u32 address;
+	u16 size;
+}NVM_BlockConfig_t;
+
+
+typedef struct
+{
+	u8* data;     // pointer to RAM data
+	u32 address;  // where to write in NVM
+	u16 length;   // total size
+	u16 index;    // progress
+	NVM_Status_t status;
+}NVM_Job_t;
 	
 
 typedef struct
@@ -30,9 +54,11 @@ typedef struct
 //NVM Structure
 typedef struct
 {
-	u16 magic_number;									// Validity marker
-	nvm_data_t faultsArray[LATCHED_FAULTS_COUNT];      // Nvm Data layout (Faults Array)
-	u16 checksum;									  // Simple checksum
+	u16 magic_number;					 // Validity marker
+	nvm_data_t faultsArray[3];			// Nvm Data layout (Faults Array)
+	u16 checksum;					   // Simple checksum
 }nvm_storage_t;
+
+
 
 #endif /* NVMSTORAGE_H_ */

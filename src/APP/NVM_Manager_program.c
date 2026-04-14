@@ -34,10 +34,14 @@ static nvm_storage_t nvm_buffer;
 // Is NVM data valid ?
 static u8 nvm_valid = FALSE;
 
+// Global var to How nvm deals with each Block
+NVM_Job_t GLobalNvmJob;
+
 NVM_BlockConfig_t NVM_Blocks[] =
 {
 	[NVM_FAULT_TABLE_INDX] = {NVM_FAULT_TABLE_ADDRESS,sizeof(nvm_storage_t)}
 };
+
 
 /* ============================================ */
 /*       PRIVATE FUNCTION PROTOTYPES            */
@@ -52,15 +56,21 @@ static u8 ValidateNVMData(nvm_storage_t* storage);
 
 void NVM_Manager_Init(void)
 {	
-	// Try to load existing data
-	nvm_storage_t* loaded_data = NVM_Manager_Load();
+	// Initialize NvmJob var
+	GLobalNvmJob.address = 0;
+	GLobalNvmJob.data = NULL;
+	GLobalNvmJob.index = 0;
+	GLobalNvmJob.length = 0;
+	GLobalNvmJob.status = NVM_IDLE;
 	
-	if(loaded_data != NULL)
+	// Try to load existing data
+	if(NVM_Manager_Load() == NVM_VALID)
 	{
 		// Valid data found
 		nvm_valid = TRUE;
 		TRACE_INFO(TRACE_ECU, "NVM data loaded successfully");
 	}
+	
 	else
 	{
 		// No valid data - initialize defaults
@@ -98,30 +108,105 @@ void NVM_Manager_Save(void)
 	nvm_buffer.magic_number = NVM_MAGIC_NUMBER;
 	nvm_buffer.checksum = CalculateChecksum(&nvm_buffer);
 	
-	NVM_WriteBlockAsync(NVM_FAULT_TABLE_INDX, nvm_buffer.faultsArray);	
+	NVM_WriteBlockAsync(NVM_FAULT_TABLE_INDX, (u8*)&nvm_buffer);	
 	TRACE_INFO(TRACE_ECU, "NVM data saved");
 }
 
-nvm_storage_t*  NVM_Manager_Load(void)
+NVM_Status_t NVM_Manager_Load(void)
 {
 	nvm_storage_t storage;
 	
-	NVM_ReadBlock(NVM_FAULT_TABLE_INDX, &storage);
+	NVM_ReadBlock(NVM_FAULT_TABLE_INDX, (u8*)&storage);
 	
 	// Validate data
 	if(ValidateNVMData(&storage))
 	{
 		// Valid data
 		nvm_buffer = storage;	
-		return &nvm_buffer;
+		return NVM_VALID;
 	}
 	else
 	{
 		// Invalid or missing data
-		return NULL;
+		return NVM_ERROR;
 	}
 }
 
+u8 NVM_ReadBlock(u16 blockID, u8* data)
+{
+	u16 i;
+
+	if (data == NULL)
+	{
+		return NOK;
+	}
+
+	u16 address = NVM_Blocks[blockID].address;
+	u16 length  = NVM_Blocks[blockID].size;
+
+	for (i = 0; i < length; i++)
+	{
+		data[i] = NVM_ReadData(address + i);
+	}
+
+	return OK;
+}
+
+u8 NVM_WriteBlockAsync(u16 blockID, const u8* data)
+{
+	if(GLobalNvmJob.status == NVM_BUSY)
+	{
+		return NOK;
+	}
+	
+	GLobalNvmJob.address = NVM_Blocks[blockID].address;
+	GLobalNvmJob.length = NVM_Blocks[blockID].size;
+	
+	GLobalNvmJob.data = (u8*)data;
+	
+	GLobalNvmJob.index = 0;
+	
+	GLobalNvmJob.status = NVM_BUSY;
+	
+	return OK;
+}
+
+NVM_Status_t NVM_GetStatus(u16 blockID)
+{
+	if(GLobalNvmJob.address == NVM_Blocks[blockID].address)
+	{
+		return GLobalNvmJob.status;
+	}
+	else
+	{
+		return NVM_ERROR;
+	}
+}
+
+void NVM_MainFunction(void)
+{
+	if(GLobalNvmJob.status == NVM_BUSY)
+	{
+		if(EEPROM_IsReady())
+		{
+			EEPROM_SendByte(GLobalNvmJob.address + GLobalNvmJob.index,
+			GLobalNvmJob.data[GLobalNvmJob.index]);
+			EEPROM_ForceWrite();
+			
+			GLobalNvmJob.index++;
+			
+			if(GLobalNvmJob.index >= GLobalNvmJob.length)
+			{
+				GLobalNvmJob.status = NVM_DONE;
+			}
+		}
+	}
+}
+
+nvm_storage_t* NVM_Manager_GetBuffer(void)
+{
+	return &nvm_buffer;
+}
 
 /* ============================================ */
 /*      PRIVATE FUNCTION IMPLEMENTATIONS        */
@@ -161,4 +246,4 @@ static u8 ValidateNVMData(nvm_storage_t* storage)
 	
 	// Data is valid
 	return TRUE;
-} 
+}

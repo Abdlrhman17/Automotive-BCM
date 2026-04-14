@@ -32,6 +32,6 @@ void VehicleMovement_StateMachine_Update(void);
 /**
  * Get current movement state
  */
-vehicle_movement_state_t VehicleMovement_GetState(void);
+const vehicle_movement_state_t VehicleMovement_GetState(void);
 
 #endif /* VEHICLEMOVEMENT_STATEMACHINE_INTERFACE_H_ */

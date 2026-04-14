@@ -41,7 +41,7 @@ void VehicleMovement_StateMachine_Update(void)
 	// No periodic tasks needed
 }
 
-vehicle_movement_state_t VehicleMovement_GetState(void)
+const vehicle_movement_state_t VehicleMovement_GetState(void)
 {
 	return Global_current_movement_state;
 }

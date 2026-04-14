@@ -18,7 +18,7 @@ Task_feedback SCHEDULER_taskfeedbackCreateTask(u8 Copy_u8Priority, void (*Copy_p
 {
 	u8 Local_u8ErrorState = OK;
 	
-	if(!Copy_u8Priority > TASK_NUM)
+	if(Copy_u8Priority < TASK_NUM)
 	{
 		if(Copy_pvTaskFunc != NULL)
 		{
@@ -50,7 +50,7 @@ Task_feedback SCHEDULER_taskfeedbackCreateTask(u8 Copy_u8Priority, void (*Copy_p
 }
 
 
-static void SCHEDULER_voidStart(void)
+void SCHEDULER_voidStart(void)
 {
 	u8 Local_u8TaskCounter;
 	
@@ -84,10 +84,12 @@ void SCHEDULER_voidSuspendTask(u8 Copy_u8Priority)
 void SCHEDULER_voidResumeTask(u8 Copy_u8Priority)
 {
 	SystemTasks[Copy_u8Priority].State = READY;
+	SystemTasks[Copy_u8Priority].FirstDelay = SystemTasks[Copy_u8Priority].Periodicity;
 }
 
 
 void SCHEDULER_voidDeleteTask(u8 Copy_u8Priority)
 {
 	SystemTasks[Copy_u8Priority].TaskFunc = NULL;
+	SystemTasks[Copy_u8Priority].State = SUSPENDED;
 }

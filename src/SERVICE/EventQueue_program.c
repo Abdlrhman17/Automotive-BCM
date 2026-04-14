@@ -1,5 +1,8 @@
 #include "EventQueue_interface.h"
 
+// Global Events Queue
+static Events_Queue_t GlobalEventQueue;
+
 
 void EVENTQUEUE_voidInit(Events_Queue_t* Copy_pvQueue)
 {
@@ -60,5 +63,10 @@ u8 EVENTQUEUE_u8deQueue(Events_Queue_t* Copy_pvQueue, ecu_event_t* Copy_pvEvent)
 		Copy_pvQueue->Front = (Copy_pvQueue->Front + 1)  % EVENT_QUEUE_SIZE;
 	}
 	return OK;
+}
+
+Events_Queue_t* EventQueue_Get(void)
+{
+	return &GlobalEventQueue;
 }
 

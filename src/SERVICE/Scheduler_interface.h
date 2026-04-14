@@ -1,7 +1,9 @@
 #ifndef SCHEDULER_INTERFACE_H_
 #define SCHEDULER_INTERFACE_H_
 
-#define TASK_NUM		3
+#include "StdTypes.h"
+
+#define TASK_NUM		5
 
 typedef enum
 {
@@ -13,7 +15,7 @@ typedef enum
 
 typedef enum
 {
-	OK = 0,								
+	TASK_OK = 0,								
 	NOK_NULL_PTR,                       /* ERROR: Null pointer as a task */
 	NOK_PRIORITY_OCC,					/* ERROR: Priority is taken by another task */	
 	NOK_PRIORITY_INVALID,				/* ERROR: Priority entered is out of tasks array bounds */
@@ -24,7 +26,7 @@ typedef enum
 
 Task_feedback SCHEDULER_taskfeedbackCreateTask(u8 Copy_u8Priority, void (*Copy_pvTaskFunc)(void), u16 Copy_u16Periodicity, u16 Copy_u16FirstDelay);
 
-static void SCHEDULER_voidStart(void);
+void SCHEDULER_voidStart(void);
 
 void SCHEDULER_voidSuspendTask(u8 Copy_u8Priority);
 

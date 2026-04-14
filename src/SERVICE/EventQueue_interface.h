@@ -23,4 +23,6 @@ u8 EVENTQUEUE_u8enQueue(Events_Queue_t* Copy_pvQueue, ecu_event_t Copy_u8Event);
 
 u8 EVENTQUEUE_u8deQueue(Events_Queue_t* Copy_pvQueue, ecu_event_t* Copy_pvEvent);
 
+Events_Queue_t* EventQueue_Get(void);
+
 #endif /* EVENTQUEUE_INTERFACE_H_ */

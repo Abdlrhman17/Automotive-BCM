@@ -7,7 +7,7 @@ typedef struct
 	u16 Periodicity;
 	void (*TaskFunc)(void);
 	u8 State;
-	u16 FirstDelay;
+	s16 FirstDelay;
 }Task_t;
 
 /*Tasks Array*/

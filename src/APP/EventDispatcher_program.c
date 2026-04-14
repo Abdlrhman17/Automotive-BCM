@@ -8,6 +8,7 @@
 #include "Lock_StateMachine_interface.h"
 #include "Wiper_StateMachine_interface.h"
 #include "Blinker_StateMachine_interface.h"
+#include "VehicleMovement_StateMachine_interface.h"
 
 void EventDispatcher_ProcessEvents(void)
 {
@@ -66,6 +67,7 @@ void EventDispatcher_ProcessEvents(void)
 			// Vehicle Movement Events
 			case VEHICLE_STOPPED_EVENT:
 			case VEHICLE_MOVING_EVENT:
+				VehicleMovement_StateMachine_ProcessEvent(event);
 				ECU_StateMachine_ProcessEvent(event);
 				Lock_StateMachine_ProcessEvent(event);
 				break;

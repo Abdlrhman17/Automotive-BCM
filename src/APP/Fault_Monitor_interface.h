@@ -7,14 +7,6 @@
 #include "StdTypes.h"
 #include "Faults.h"
 
-// For the macro not to be included everywhere
-#ifdef _IS_LATCED_FAULTS_ARR_INC
-
-// Latched Faults count (For nvm)
-#define LATCHED_FAULTS_COUNT	3
-
-#endif
-
 // Total number of fault types
 #define FAULT_COUNT  6
 
@@ -57,6 +49,6 @@ u8 Fault_Monitor_HasLatchedFaults(void);
  */
 void Fault_Monitor_ClearFault(fault_id_t fault_id);
 
-fault_t* fault_Moniter_GetFaultsTable(void);
+fault_t* fault_Monitor_GetFaultsTable(void);
 
 #endif /* FAULT_MONITOR_INTERFACE_H_ */

@@ -183,6 +183,9 @@ void Fault_Monitor_ClearFault(fault_id_t fault_id)
 				nvm_storage_t* nvm = NVM_Manager_GetBuffer();
 				nvm->faultsArray[fault_id].is_active = FALSE;
 				
+				// Clear Fault from Global Faults Array
+				GlobalFaultsTable[fault_id].is_Active = FALSE;
+
 				// Save To Nvm
 				NVM_Manager_Save();
 			}
@@ -197,9 +200,9 @@ void Fault_Monitor_ClearFault(fault_id_t fault_id)
 	}
 }
 
-fault_t* fault_Moniter_GetFaultsTable(void)
+fault_t* fault_Monitor_GetFaultsTable(void)
 {
-	return &GlobalFaultsTable[FAULT_COUNT];
+	return &GlobalFaultsTable[0];
 }
 
 

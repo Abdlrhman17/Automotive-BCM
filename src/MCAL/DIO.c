@@ -161,7 +161,7 @@ DIO_PinVoltag_type DIO_ReadPin(DIO_PinNum_type pin)
 	switch(port)
 	{
 		case PA:
-		volt = GET_BIT(PORTA,pin_num);
+		volt = GET_BIT(PINA,pin_num);
 		break;
 		
 		case PB:

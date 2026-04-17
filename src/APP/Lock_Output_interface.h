@@ -19,6 +19,6 @@ void Lock_Output_Init(void);
  * Read lock state and drive actuators
  * Called periodically
  */
-void Lock_Output_Update(void);
+void Lock_Output_Update(u8 elapsedTime_ms);
 
 #endif /* LOCK_OUTPUT_INTERFACE_H_ */

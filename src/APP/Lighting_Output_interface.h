@@ -20,6 +20,6 @@ void Lighting_Output_Init(void);
  * Generate blink pattern based on state
  * Called periodically
  */
-void Lighting_Output_Update(void);
+void Lighting_Output_Update(u8 elapsedTime_ms);
 
 #endif /* LIGHTING_OUTPUT_INTERFACE_H_ */

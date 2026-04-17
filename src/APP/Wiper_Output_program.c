@@ -42,7 +42,7 @@ void Wiper_Output_Init(void)
 	TRACE_INFO(TRACE_WIPER, "Wiper output initialized");
 }
 
-void Wiper_Output_Update(void)
+void Wiper_Output_Update(u8 elapsedTime_ms)
 {
 	wiper_control_state_t Local_WiperState = Wiper_GetState();
 	
@@ -57,12 +57,12 @@ void Wiper_Output_Update(void)
 		case WIPERS_INTERMITTENT:		// Wipe periodically
 		if(intermittent_counter < INTERMITTENT_PERIOD_MS)
 		{
-			intermittent_counter++;
+			intermittent_counter += elapsedTime_ms;
 			OCR0 = WIPER_SPEED_OFF;  // Off while waiting
 		}
 		else if(intermittent_counter < INTERMITTENT_PERIOD_MS + WIPE_DURATION_MS)
 		{
-			intermittent_counter++;
+			intermittent_counter += elapsedTime_ms;
 			OCR0 = WIPER_SPEED_LOW;  // On during wipe
 		}
 		else

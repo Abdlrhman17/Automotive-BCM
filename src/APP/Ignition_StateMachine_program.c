@@ -24,7 +24,7 @@
 static ignition_state_t Global_current_ignition_state = IGNITION_OFF;
 
 //	Counter to get back from IGNITION_START to IGNITION_ON
-static u16 start_position_counter = 0;
+static s16 start_position_counter = 0;
 
 
 /* ============================================ */
@@ -114,13 +114,13 @@ void Ignition_StateMachine_ProcessEvent(ecu_event_t event)
 	}
 }
 
-void Ignition_StateMachine_Update(void)
+void Ignition_StateMachine_Update(u16 elapsedTime_ms)
 {
 	if(Global_current_ignition_state == IGNITION_START)
 	{
 		if(start_position_counter > 0)
 		{
-			start_position_counter--;
+			start_position_counter -= elapsedTime_ms;		
 		}
 		else
 		{

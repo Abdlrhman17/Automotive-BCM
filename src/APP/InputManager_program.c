@@ -32,8 +32,7 @@
 /* ============================================ */
 /*          PRIVATE DEFINES                     */
 /* ============================================ */
-#define DEBOUNCE_THRESHOLD_MS      50    // Mechanical switches need debouncing
-#define IGNITION_STABLE_TIME_MS    20    // How long ignition must be stable
+#define DEBOUNCE_THRESHOLD_TICKS      5    // Mechanical switches need debouncing
 
 
 /* ============================================ */
@@ -243,7 +242,7 @@ static u8 DebounceInput(input_state_t* input, u8 raw_value)
 {
 	if(raw_value == input->current_value)
 	{
-		if(input->stable_counter < DEBOUNCE_THRESHOLD_MS)
+		if(input->stable_counter < DEBOUNCE_THRESHOLD_TICKS)
 		{
 			input->stable_counter++;
 		}
@@ -254,7 +253,7 @@ static u8 DebounceInput(input_state_t* input, u8 raw_value)
 		input->stable_counter = 0;
 	}
 	
-	if(input->stable_counter >= DEBOUNCE_THRESHOLD_MS)
+	if(input->stable_counter >= DEBOUNCE_THRESHOLD_TICKS)
 	{
 		if(input->current_value != input->previous_value)
 		{

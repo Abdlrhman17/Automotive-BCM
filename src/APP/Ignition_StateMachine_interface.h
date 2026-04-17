@@ -29,7 +29,7 @@ void Ignition_StateMachine_ProcessEvent(ecu_event_t event);
  * Periodic update
  * Handle START auto-return timeout
  */
-void Ignition_StateMachine_Update(void);
+void Ignition_StateMachine_Update(u16 elapsedTime_ms);
 
 /**
  * Get current ignition state

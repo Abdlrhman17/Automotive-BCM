@@ -30,7 +30,7 @@ void Wiper_StateMachine_ProcessEvent(ecu_event_t event);
  * Periodic update
  * Monitor ignition state, force OFF if not ON
  */
-void Wiper_StateMachine_Update(void);
+void Wiper_StateMachine_Update(u16 elapsedTime_ms);
 
 /**
  * Get current wiper state

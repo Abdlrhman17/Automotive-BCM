@@ -48,7 +48,7 @@ void Lock_Output_Init(void)
 	TRACE_INFO(TRACE_LOCK,"Lock output initialized");
 }
 
-void Lock_Output_Update(void)
+void Lock_Output_Update(u8 elapsedTime_ms)
 {
 	door_lock_state_t local_DoorLockState = Lock_GetState();
 	
@@ -75,7 +75,7 @@ void Lock_Output_Update(void)
 		
 		if(actuators_delay_counter < ACTUATORS_DELAY_TIMEOUT_MS)	// Check for time-out
 		{
-			actuators_delay_counter++;
+			actuators_delay_counter += elapsedTime_ms;
 		}
 		else	//	Time-out Reached
 		{

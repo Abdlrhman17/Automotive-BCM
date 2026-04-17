@@ -27,7 +27,7 @@ void Lock_StateMachine_ProcessEvent(ecu_event_t event);
 /**
  * Periodic update
  */
-void Lock_StateMachine_Update(void);
+void Lock_StateMachine_Update(u16 elapsedTime_ms);
 
 /**
  * Get current lock state

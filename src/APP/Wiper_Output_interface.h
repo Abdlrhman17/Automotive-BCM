@@ -20,6 +20,6 @@ void Wiper_Output_Init(void);
  * Drive motor based on wiper state
  * Called periodically
  */
-void Wiper_Output_Update(void);
+void Wiper_Output_Update(u8 elapsedTime_ms);
 
 #endif /* WIPER_OUTPUT_INTERFACE_H_ */

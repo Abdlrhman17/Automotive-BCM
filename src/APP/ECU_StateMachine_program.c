@@ -22,7 +22,7 @@
 /* ============================================ */
 static ecu_state_t Global_current_ecu_state = ECU_STATE_STARTUP;					// STARTUP/ACTIVE
 static ecu_operational_state_t Global_operational_state = ECU_OP_STATE_NORMAL;		// NORMAL/DIAGNOSTIC/DEGRADED
-static u32 diagnostic_timeout_counter = 0;											// Countdown timer for diag timeout
+static s32 diagnostic_timeout_counter = 0;											// Countdown timer for diag timeout
 
 //Reset Function
 void(*resetFunc)(void) = 0;
@@ -141,13 +141,13 @@ void ECU_StateMachine_ProcessEvent(ecu_event_t event)
 	}
 }
 
-void ECU_StateMachine_Update(void)
+void ECU_StateMachine_Update(u16 elapsedTime_ms)
 {
 	if(Global_operational_state == ECU_OP_STATE_DIAGNOSTIC)
 	{
 		if(diagnostic_timeout_counter > 0)
 		{
-			diagnostic_timeout_counter--;
+			diagnostic_timeout_counter -= elapsedTime_ms;
 		}
 		else
 		{

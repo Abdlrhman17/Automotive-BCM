@@ -31,7 +31,7 @@ void ECU_StateMachine_ProcessEvent(ecu_event_t event);
  * Handle periodic tasks only
  * No event dequeuing	
  */
-void ECU_StateMachine_Update(void);
+void ECU_StateMachine_Update(u16 elapsedTime_ms);
 
 /**
  * Get current ECU state

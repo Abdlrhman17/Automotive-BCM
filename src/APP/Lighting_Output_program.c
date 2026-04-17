@@ -50,13 +50,13 @@ void Lighting_Output_Init(void)
 	TRACE_INFO(TRACE_BLINKER,"Blinkers Output Initialized");
 }
 
-void Lighting_Output_Update(void)
+void Lighting_Output_Update(u8 elapsedTime_ms)
 {
 	blinkers_state_t Local_BlinkersState = Blinker_GetState();
 	
 	if(Local_BlinkersState != BLINKERS_OFF)
 	{
-		blink_counter++;
+		blink_counter += elapsedTime_ms;
 		
 		if(blink_counter >= BLINK_PERIOD_MS)	//Blinking Timer reached
 		{

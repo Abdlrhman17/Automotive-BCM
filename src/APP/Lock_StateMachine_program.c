@@ -106,7 +106,7 @@ void Lock_StateMachine_ProcessEvent(ecu_event_t event)
 	}
 }
 
-void Lock_StateMachine_Update(void)
+void Lock_StateMachine_Update(u16 elapsedTime_ms)
 {
 	// Auto-lock feature: Lock after timeout when stopped
 	if(Global_current_lock_state == UNLOCKED)
@@ -115,7 +115,7 @@ void Lock_StateMachine_Update(void)
 		{
 			if(auto_lock_counter < AUTO_LOCK_TIMEOUT_MS)
 			{
-				auto_lock_counter++;
+				auto_lock_counter += elapsedTime_ms;
 			}
 			else
 			{

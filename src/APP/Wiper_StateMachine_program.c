@@ -123,7 +123,7 @@ void Wiper_StateMachine_ProcessEvent(ecu_event_t event)
 	}
 }
 
-void Wiper_StateMachine_Update(void)
+void Wiper_StateMachine_Update(u16 elapsedTime_ms)
 {
 	if(Ignition_GetState() != IGNITION_ON)
 	{
@@ -131,7 +131,7 @@ void Wiper_StateMachine_Update(void)
 		{
 			if(auto_wiper_off_counter < AUTO_WIPER_OFF_TIMEOUT_MS)		// if counter isn't reached
 			{
-				auto_wiper_off_counter++;
+				auto_wiper_off_counter += elapsedTime_ms;
 			}
 			else	// Auto off counter is reached
 			{					

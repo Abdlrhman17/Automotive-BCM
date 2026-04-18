@@ -36,7 +36,7 @@ void VehicleMovement_StateMachine_ProcessEvent(ecu_event_t event)
 	}
 }
 
-void VehicleMovement_StateMachine_Update(void)
+void VehicleMovement_StateMachine_Update(u16 elapsedTime_ms)
 {
 	// No periodic tasks needed
 }

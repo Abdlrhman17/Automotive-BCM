@@ -4,6 +4,7 @@
 /* ============================================ */
 /*              INCLUDES                        */
 /* ============================================ */
+#include "StdTypes.h"
 #include "VehicleManager.h"
 #include "Events.h"
 
@@ -27,7 +28,7 @@ void VehicleMovement_StateMachine_ProcessEvent(ecu_event_t event);
 /**
  * Periodic update
  */
-void VehicleMovement_StateMachine_Update(void);
+void VehicleMovement_StateMachine_Update(u16 elapsedTime_ms);
 
 /**
  * Get current movement state

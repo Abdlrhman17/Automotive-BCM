@@ -53,6 +53,7 @@ void ECU_StateMachine_ProcessEvent(ecu_event_t event)
 	{
 		// Save to Nvm
 		NVM_Manager_Save();
+		TRACE_INFO(TRACE_ECU, "Reseting ECU...");
 		
 		resetFunc();				
 	}

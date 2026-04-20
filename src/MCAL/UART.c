@@ -2,7 +2,7 @@
 #include "atmega32_mem_map.h"
 #include "Utils.h"
 #include "UART_interface.h"
-
+#include "avr/pgmspace.h"
 
 static void (*UART_TX_Fptr)(void) = NULL_PTR;
 static void (*UART_RX_Fptr)(void) = NULL_PTR;
@@ -17,6 +17,7 @@ void UART_Init(void)
 	/*ENABLE*/
 	SET_BIT(UCSRB,TXEN);
 	SET_BIT(UCSRB,RXEN);
+	
 }
 
 
@@ -60,6 +61,21 @@ u8 UART_ReceiveData_NoBlock(void)
 	return UDR;
 }
 
+void UART_SendString(const char *s)
+{
+	while (*s)
+	{
+		UART_SendData((u8)*s++);
+	}
+}
+
+void uart_send_string_P(const char *progmem_s) 
+{
+	char c;
+	while ((c = pgm_read_byte(progmem_s++))) {
+		UART_SendData(c);
+	}
+}
 
 void UART_TX_InterruptEnable(void)
 {

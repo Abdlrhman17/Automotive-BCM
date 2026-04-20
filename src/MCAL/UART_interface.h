@@ -14,6 +14,10 @@ void UART_SendData_NoBlock(u8 data);
 
 u8 UART_ReceiveData_NoBlock(void);
 
+void UART_SendString(const char *s);
+
+void uart_send_string_P(const char *progmem_s);
+
 void UART_TX_InterruptEnable(void);
 void UART_RX_InterruptEnable(void);
 

@@ -1,6 +1,9 @@
 #ifndef TRACE_H_
 #define TRACE_H_
 
+#include "UART_interface.h"
+#include <avr/pgmspace.h>
+
 typedef enum
 {
 	TRACE_LEVEL_ERROR = 0,
@@ -23,9 +26,8 @@ typedef enum
 } trace_category_t;
 
 
-#define TRACE_ERROR(tarceCategory, msg)
-#define TRACE_INFO(tarceCategory, msg)
-#define TRACE_DEBUG(tarceCategory, msg)
-
+#define TRACE_ERROR(cat, msg)  uart_send_string_P(PSTR("[ERR][" #cat "] " msg "\r\n"))
+#define TRACE_INFO(cat, msg)   uart_send_string_P(PSTR("[INF][" #cat "] " msg "\r\n"))
+#define TRACE_DEBUG(cat, msg)  uart_send_string_P(PSTR("[DBG][" #cat "] " msg "\r\n"))
 
 #endif /* TRACE_H_ */

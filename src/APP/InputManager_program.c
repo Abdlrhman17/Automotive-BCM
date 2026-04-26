@@ -60,19 +60,9 @@ static input_state_t blinker_stalk_state;
 static input_state_t wiper_stalk_state;
 static input_state_t speed_signal_state;
 
-
-/* ============================================ */
-/*          SIMULATION VARIABLES                */
-/* ============================================ */
-// These replace actual hardware until you have it
-static u8 sim_ignition_position = 0;     // 0=OFF, 1=ACC, 2=ON, 3=START
-static u8 sim_door_sensor = 0;           // 0=CLOSED, 1=OPEN
-static u8 sim_lock_button = 2;           // 0=LOCK, 1=UNLOCK, 2=NONE
-static u8 sim_blinker_stalk = 0;         // 0=OFF, 1=LEFT, 2=RIGHT, 3=HAZARD
-static u8 sim_wiper_stalk = 0;           // 0=OFF, 1=INT, 2=LOW, 3=HIGH
-static u8 sim_speed = 0;                 // 0=STOPPED, 1=MOVING
-
-
+static sim_inputs_t sim;
+ 						
+						 
 /* ============================================ */
 /*       PRIVATE FUNCTION PROTOTYPES            */
 /* ============================================ */
@@ -197,44 +187,49 @@ void InputManager_Update(void)
 }
 
 
+sim_inputs_t* INPUTMAN_GetSim(void)
+{
+	return &sim;
+}
+
 /* ============================================ */
 /*      PRIVATE FUNCTION IMPLEMENTATIONS        */
 /* ============================================ */
 
 static u8 ReadIgnitionSwitch_Hardware(void)
 {
-	return sim_ignition_position;
+	return sim.ignition;
 }
 
 
 static u8 ReadDoorSensor_Hardware(void)
 {
-	return sim_door_sensor;
+	return sim.door;
 }
 
 
 
 static u8 ReadLockButton_Hardware(void)
 {
-	return sim_lock_button;
+	return sim.lock_btn;
 }
 
 
 static u8 ReadBlinkerStalk_Hardware(void)
 {
-	return sim_blinker_stalk;
+	return sim.blinker;
 }
 
 
 static u8 ReadWiperStalk_Hardware(void)
 {
-	return sim_wiper_stalk;
+	return sim.wipers;
 }
 
 
 static u8 ReadSpeedSignal_Hardware(void)
 {
-	return sim_speed;
+	return sim.speed;
 }
 
 

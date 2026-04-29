@@ -18,6 +18,8 @@ void UART_SendString(const char *s);
 
 void uart_send_string_P(const char *progmem_s);
 
+void uart_send_int(int val);
+
 void UART_TX_InterruptEnable(void);
 void UART_RX_InterruptEnable(void);
 
@@ -27,7 +29,5 @@ void UART_RX_InterruptDisable(void);
 void UART_TX_SetCallBack(void (*LocalFptr)(void));
 void UART_RX_SetCallBack(void (*LocalFptr)(void));
 
-
-u16 UART_GenFrame(u8 data);
 
 #endif /* UART_INTERFACE_H_ */

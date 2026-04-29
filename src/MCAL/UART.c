@@ -2,7 +2,8 @@
 #include "atmega32_mem_map.h"
 #include "Utils.h"
 #include "UART_interface.h"
-#include "avr/pgmspace.h"
+#include <stdlib.h>
+#include <avr/pgmspace.h>
 
 static void (*UART_TX_Fptr)(void) = NULL_PTR;
 static void (*UART_RX_Fptr)(void) = NULL_PTR;
@@ -75,6 +76,13 @@ void uart_send_string_P(const char *progmem_s)
 	while ((c = pgm_read_byte(progmem_s++))) {
 		UART_SendData(c);
 	}
+}
+
+void uart_send_int(int value)
+{
+	char buf[12];
+	itoa(value, buf, 10);
+	UART_SendString(buf);
 }
 
 void UART_TX_InterruptEnable(void)

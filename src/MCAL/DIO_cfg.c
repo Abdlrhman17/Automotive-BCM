@@ -3,7 +3,7 @@
 #include "DIO_private.h"
 
 
-const DIO_PinStatus_type PinStatusArray[TotalPins] = {
+const DIO_PinStatus_type PinStatusArray[DIO_TotalPins] = {
 	
 	OUTPUT,        /* PORT A PIN 0 */
 	OUTPUT,        /* PORT A PIN 1 */

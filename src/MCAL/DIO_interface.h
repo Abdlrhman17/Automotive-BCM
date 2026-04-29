@@ -16,7 +16,6 @@ typedef enum
 	PB,
 	PC,
 	PD
-	
 }DIO_Port_type;
 
 
@@ -29,40 +28,44 @@ typedef enum
 
 typedef enum
 {
-	PINA0,
-	PINA1,
-	PINA2,
-	PINA3,
-	PINA4,
-	PINA5,
-	PINA6,
-	PINA7,
-	PINB0,
-	PINB1,
-	PINB2,
-	PINB3,
-	PINB4,
-	PINB5,
-	PINB6,
-	PINB7,
-	PINC0,
-	PINC1,
-	PINC2,
-	PINC3,
-	PINC4,
-	PINC5,
-	PINC6,
-	PINC7,
-	PIND0,
-	PIND1,
-	PIND2,
-	PIND3,
-	PIND4,
-	PIND5,
-	PIND6,
-	PIND7,
-	TotalPins
-}DIO_PinNum_type;
+	DIO_PINA0,
+	DIO_PINA1,
+	DIO_PINA2,
+	DIO_PINA3,
+	DIO_PINA4,
+	DIO_PINA5,
+	DIO_PINA6,
+	DIO_PINA7,
+
+	DIO_PINB0,
+	DIO_PINB1,
+	DIO_PINB2,
+	DIO_PINB3,
+	DIO_PINB4,
+	DIO_PINB5,
+	DIO_PINB6,
+	DIO_PINB7,
+
+	DIO_PINC0,
+	DIO_PINC1,
+	DIO_PINC2,
+	DIO_PINC3,
+	DIO_PINC4,
+	DIO_PINC5,
+	DIO_PINC6,
+	DIO_PINC7,
+
+	DIO_PIND0,
+	DIO_PIND1,
+	DIO_PIND2,
+	DIO_PIND3,
+	DIO_PIND4,
+	DIO_PIND5,
+	DIO_PIND6,
+	DIO_PIND7,
+
+	DIO_TotalPins
+} DIO_PinNum_type;
 
 void DIO_Init(void);
 

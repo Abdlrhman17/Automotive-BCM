@@ -7,7 +7,7 @@
 
 void DIO_Init(void)
 {
-	for(DIO_PinNum_type i = PINA0; i < TotalPins; ++i)
+	for(DIO_PinNum_type i = DIO_PINA0; i < DIO_TotalPins; ++i)
 	{
 		DIO_InitPin(i, PinStatusArray[i]);
 	}

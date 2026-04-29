@@ -61,13 +61,13 @@ static void ClearFaultInternal(fault_id_t fault_id);
 
 // An Array that contains all functions to check for any faults
 u8 (*CheckFaultArr[FAULT_COUNT])(void) = {
-	CheckIgnitionSignalFault,
-	CheckDoorSensorFault,
-	CheckLockActuatorFault,
-	CheckBlinkerOutputFault,
-	CheckWiperOutputFault,
-	CheckSpeedSignalFault
-};											
+	CheckIgnitionSignalFault,   
+	CheckLockActuatorFault,     
+	CheckSpeedSignalFault,      
+	CheckDoorSensorFault,       
+	CheckBlinkerOutputFault,    
+	CheckWiperOutputFault       
+};										
 											
 /* ============================================ */
 /*       PUBLIC FUNCTION IMPLEMENTATIONS        */

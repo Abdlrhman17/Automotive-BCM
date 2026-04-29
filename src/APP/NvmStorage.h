@@ -1,10 +1,12 @@
 #ifndef NVMSTORAGE_H_
 #define NVMSTORAGE_H_
 
+#include "config.h"
 #include "StdTypes.h"
 #include "Faults.h"
 #include "Fault_Monitor_interface.h"
 #include "VehicleManager.h"
+
 
 /*
 Data saved to NVM when :
@@ -55,7 +57,7 @@ typedef struct
 typedef struct
 {
 	u16 magic_number;					 // Validity marker
-	nvm_data_t faultsArray[3];			// Nvm Data layout (Faults Array)
+	nvm_data_t faultsArray[LATCHED_FAULTS_COUNT];			// Nvm Data layout (Faults Array)
 	u16 checksum;					   // Simple checksum
 }nvm_storage_t;
 

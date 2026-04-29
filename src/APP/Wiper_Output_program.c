@@ -6,6 +6,7 @@
 #include "Wiper_StateMachine_interface.h"
 #include "TIMERS.h"
 #include "Trace.h"
+#include "DIO_interface.h"
 
 /* ============================================ */
 /*          PRIVATE DEFINES                     */
@@ -35,8 +36,10 @@ static u16 intermittent_counter = 0;
 
 void Wiper_Output_Init(void)
 {
-	TIMER0_Init(TIMER0_PHASECORRECT_MODE,TIMER0_SCALER_8);
+	// Initialize Timer0 (Phase Correct mode, Prescaler 8 & OCR0 Non-inverting mode)
+	TCCR0 = (1 << WGM00) | (1 << COM01) | (1 << CS01) | (1 << CS00);
 	OCR0 = 0;
+
 	intermittent_counter = 0;
 	
 	TRACE_INFO(TRACE_WIPER, "Wiper output initialized");

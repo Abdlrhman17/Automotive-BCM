@@ -13,6 +13,9 @@ static void (*Timer1_ICU_Fptr) (void)=NULL_PTR;
 /*timer 0 functions*/
 void TIMER0_Init(Timer0Mode_type mode,Timer0Scaler_type scaler)
 {
+	TCCR0&=0XF8;//0b11111000
+	TCCR0|=scaler;
+	
 	switch (mode)
 	{
 		case TIMER0_NORMAL_MODE:
@@ -32,8 +35,6 @@ void TIMER0_Init(Timer0Mode_type mode,Timer0Scaler_type scaler)
 		SET_BIT(TCCR0,WGM01);
 		break;
 	}
-	TCCR0&=0XF8;//0b11111000
-	TCCR0|=scaler;
 }
 
 void TIMER0_OC0Mode(OC0Mode_type mode)

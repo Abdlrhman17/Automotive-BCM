@@ -9,6 +9,8 @@
 #include "Trace.h"
 
 
+
+
 /* ============================================ */
 /*          PRIVATE DEFINES                     */
 /* ============================================ */
@@ -16,10 +18,10 @@
 #define BLINK_PERIOD_MS      500    // Blink every 500ms (on 500ms, off 500ms)
 
 // Blinkers Pins
-#define FRONT_LEFT_BLINKER_PIN     PINA0
-#define FRONT_RIGHT_BLINKER_PIN    PINC0
-#define REAR_LEFT_BLINKER_PIN      PINB7
-#define REAR_RIGHT_BLINKER_PIN     PIND7
+#define FRONT_LEFT_BLINKER_PIN     DIO_PINA0
+#define FRONT_RIGHT_BLINKER_PIN    DIO_PINC0
+#define REAR_LEFT_BLINKER_PIN      DIO_PINB7
+#define REAR_RIGHT_BLINKER_PIN     DIO_PIND7
 
 
 /* ============================================ */
@@ -70,9 +72,6 @@ void Lighting_Output_Update(u8 elapsedTime_ms)
 				DIO_WritePin(REAR_RIGHT_BLINKER_PIN,blink_output_state);
 				DIO_WritePin(FRONT_LEFT_BLINKER_PIN,LOW);
 				DIO_WritePin(REAR_LEFT_BLINKER_PIN,LOW);
-				
-				TRACE_INFO(TRACE_BLINKER,"RIGHT Blinkers On");
-				
 				break;
 				
 				case BLINKERS_LEFT:
@@ -80,9 +79,6 @@ void Lighting_Output_Update(u8 elapsedTime_ms)
 				DIO_WritePin(REAR_LEFT_BLINKER_PIN,blink_output_state);
 				DIO_WritePin(FRONT_RIGHT_BLINKER_PIN,LOW);
 				DIO_WritePin(REAR_RIGHT_BLINKER_PIN,LOW);
-				
-				TRACE_INFO(TRACE_BLINKER,"LEFT Blinkers On");
-				
 				break;
 				
 				case BLINKERS_HAZARD:
@@ -90,9 +86,6 @@ void Lighting_Output_Update(u8 elapsedTime_ms)
 				DIO_WritePin(REAR_RIGHT_BLINKER_PIN,blink_output_state);
 				DIO_WritePin(FRONT_LEFT_BLINKER_PIN,blink_output_state);
 				DIO_WritePin(REAR_LEFT_BLINKER_PIN,blink_output_state);
-				
-				TRACE_INFO(TRACE_BLINKER,"HAZARD Blinkers On");				
-				
 				break;
 				
 				default:

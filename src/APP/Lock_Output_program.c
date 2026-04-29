@@ -14,8 +14,8 @@
 /*          PRIVATE DEFINES                     */
 /* ============================================ */
 // GPIO pins for lock actuators
-#define LOCK_ACTUATOR_PIN    PINA0
-#define UNLOCK_ACTUATOR_PIN  PINA1
+#define LOCK_ACTUATOR_PIN    DIO_PINB1
+#define UNLOCK_ACTUATOR_PIN  DIO_PINB2
 
 // Duration for the actuators to delay
 #define ACTUATORS_DELAY_TIMEOUT_MS		300		// 300 MS
@@ -41,8 +41,7 @@ static u8 motor_active = 0;
 void Lock_Output_Init(void)
 {	
 	// Initialized to Locked
-	DIO_WritePin(LOCK_ACTUATOR_PIN,HIGH);
-	DIO_WritePin(UNLOCK_ACTUATOR_PIN,LOW);
+	EVENTQUEUE_u8enQueue(EventQueue_Get(), LOCK_REQUEST_EVENT);
 	actuators_delay_counter = 0;
 	motor_active = 0;
 	TRACE_INFO(TRACE_LOCK,"Lock output initialized");
